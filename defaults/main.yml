@@ -1,4 +1,6 @@
 ---
+resource_state: present
+
 image:
 instance_type: t2.micro
 keypair_name:

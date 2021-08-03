@@ -16,6 +16,7 @@
         image: "{{ molecule_platforms.0.image }}"
         instance_type: "{{ molecule_platforms.0.instance_type }}"
         keypair_name: "{{ molecule_platforms.0.keypair_name }}"
+        resource_state: 'present'
         security_group_name: "{{ molecule_platforms.0.security_group_name }}"
         tag_name: "{{ molecule_platforms.0.tag_name }}"
         tag_created_by: "{{ molecule_platforms.0.tag_created_by }}"
