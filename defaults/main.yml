@@ -28,3 +28,5 @@ security_group_rules_egress:
     to_port: 0
     cidr_ip: '0.0.0.0/0'
 keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+
+volume_size: 10
