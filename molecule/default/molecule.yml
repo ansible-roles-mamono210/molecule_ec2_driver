@@ -17,7 +17,7 @@ provisioner:
   name: ansible
   config_options:
     defaults:
-      callback_whitelist: ansible.posix.profile_tasks
+      callback_enabled: ansible.posix.profile_tasks
   connection_options:
     image: ${AMI_ID}
     instance_type: t2.micro
@@ -31,8 +31,6 @@ verifier:
 scenario:
   test_sequence:
     - dependency
-    - cleanup
     - syntax
-    - create
     - converge
     - destroy
