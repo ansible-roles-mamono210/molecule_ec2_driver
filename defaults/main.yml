@@ -1,18 +1,13 @@
 ---
+image:
+
+instance_type: t2.micro
+
+keypair_name:
+
 resource_state: present
 
-image:
-instance_type: t2.micro
-keypair_name:
 security_group_name:
-vpc_subnet_id:
-tag_name:
-tag_created_by:
-
-ssh_user:
-ssh_port: 22
-
-security_group_description: 'Security group for testing Molecule'
 security_group_rules:
   - proto: tcp
     from_port: "{{ ssh_port }}"
@@ -29,4 +24,11 @@ security_group_rules_egress:
     cidr_ip: '0.0.0.0/0'
 keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
 
+ssh_user:
+ssh_port: 22
+
+tag_created_by:
+tag_name:
+
 volume_size: 10
+vpc_subnet_id:

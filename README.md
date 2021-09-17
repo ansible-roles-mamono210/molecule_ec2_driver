@@ -14,6 +14,8 @@ None
 Role Variables
 --------------
 
+See details in 'meta/argument_specs.yml'.
+
 ```YAML
 ---
 image:
