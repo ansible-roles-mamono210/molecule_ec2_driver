@@ -7,7 +7,7 @@ orbs:
 executors:
   molecule:
     docker:
-      - image: ghcr.io/docker-hub-tm/circleci-executors_molecule/molecule@sha256:85df1eeb10c0ec5dcdb6a5e3c4d385613f38f9991943920d39fa6044fdc36249
+      - image: ghcr.io/docker-hub-tm/circleci-executors_molecule/molecule:latest
 
 jobs:
   build:
