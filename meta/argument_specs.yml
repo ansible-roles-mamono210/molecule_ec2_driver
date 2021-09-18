@@ -30,8 +30,10 @@ argument_specs:
 
       resource_state:
         type: str
+        choices:
+          - present
+          - absent
         description: If the value is 'present', EC2 instances, security group, and keypair would be created, and if the value is 'absent', these exisiting resources would be deleted.
-        required: yes
 
       security_group_name:
         type: str
