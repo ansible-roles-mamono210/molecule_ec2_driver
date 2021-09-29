@@ -1,5 +1,5 @@
-[![](https://github.com/ansible-roles-mamono210/molecule-test-ec2/workflows/build/badge.svg)](https://github.com/ansible-roles-mamono210/molecule-test-ec2/actions?query=workflow%3Abuild)
-[![CircleCI](https://circleci.com/gh/ansible-roles-mamono210/molecule-test-ec2.svg?style=svg)](https://circleci.com/gh/ansible-roles-mamono210/molecule-test-ec2)
+[![](https://github.com/ansible-roles-mamono210/molecule_test_ec2/workflows/build/badge.svg)](https://github.com/ansible-roles-mamono210/molecule_test_ec2/actions?query=workflow%3Abuild)
+[![CircleCI](https://circleci.com/gh/ansible-roles-mamono210/molecule_test_ec2.svg?style=svg)](https://circleci.com/gh/ansible-roles-mamono210/molecule_test_ec2)
 
 Role Description
 =========
@@ -60,7 +60,7 @@ Example Playbook
 - hosts: all
   become: true
   roles:
-    - molecule-test-ec2
+    - molecule_test_ec2
 ```
 
 License
