@@ -37,16 +37,13 @@
     index_var: index
   when: not skip_instances
 
-- name: Sleep for 60 seconds instance(s) deletion to complete
-  ansible.builtin.wait_for:
-    timeout: 60
-  delegate_to: localhost
-  when: not skip_instances
-
 - name: Delete security group
   amazon.aws.ec2_group:
     group_id: "{{ item.group_id }}"
     state: absent
+  register: ec2_group_jobs
+  until: ec2_group_jobs.group_id is none
+  retries: 300
   with_items: "{{ instance_conf }}"
   when: not skip_instances
 
