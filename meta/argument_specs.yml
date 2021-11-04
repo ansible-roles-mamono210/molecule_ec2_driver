@@ -9,8 +9,15 @@ argument_specs:
     options:
 
       image:
-        description: AMI ID. Required when resource_state=present.
-        required: yes
+        description: AMI ID. Required when resource_state=present, and image-name and image-owner is not set.
+        type: str
+
+      image_name:
+        description: AMI name. Required when resource_state=present, and image is not set. If more than one AMI is applicable, the AMI with the most recent creation date will be applied.
+        type: str
+
+      image_owner:
+        description: AMI owner id. Required when resource_state=present, and image-name and ami_owner_id is not set.
         type: str
 
       instance_type:

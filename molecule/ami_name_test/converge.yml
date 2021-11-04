@@ -11,13 +11,15 @@
 
     - name: Execute
       ansible.builtin.include_role:
-        name: molecule-test-ec2
+        name: molecule_test_ec2
       vars:
-        image: "{{ molecule_platforms.0.image }}"
+        image_name: "{{ molecule_platforms.0.image_name }}"
+        image_owner: "{{ molecule_platforms.0.image_owner }}"
         instance_type: "{{ molecule_platforms.0.instance_type }}"
         keypair_name: "{{ molecule_platforms.0.keypair_name }}"
-        resource_state: 'absent'
+        resource_state: 'present'
         security_group_name: "{{ molecule_platforms.0.security_group_name }}"
         tag_name: "{{ molecule_platforms.0.tag_name }}"
         tag_created_by: "{{ molecule_platforms.0.tag_created_by }}"
+        volume_size: "{{ molecule_platforms.0.volume_size }}"
         vpc_subnet_id: "{{ molecule_platforms.0.vpc_subnet_id }}"

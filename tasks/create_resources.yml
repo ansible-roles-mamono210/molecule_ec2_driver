@@ -40,7 +40,7 @@
   when: keypair.results[0].msg == "key pair created"
 
 - name: Get the ec2 ami(s) by owner and name, if image not set
-  amazon.aws.ec2_ami_facts:
+  amazon.aws.ec2_ami_info:
     owners: "{{ image_owner }}"
     filters:
       name: "{{ image_name }}"
@@ -48,7 +48,15 @@
   loop_control:
     index_var: index
   when: item.image is not defined
-  register: ami_facts
+  register: ami_info
+
+- name: Set AMI id
+  ansible.builtin.set_fact:
+    image: "{{ ami_info.results[-1].images[-1].image_id }}"
+  loop: "{{ molecule_yml.platforms }}"
+  loop_control:
+    index_var: index
+  when: item.image is not defined
 
 - name: Create molecule instance(s)
   amazon.aws.ec2:
