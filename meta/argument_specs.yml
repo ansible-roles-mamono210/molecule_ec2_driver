@@ -22,17 +22,14 @@ argument_specs:
 
       instance_type:
         description: EC2 instance type
-        required: yes
         type: str
 
       keypair_name:
         description: EC2 key pair name. A key name is up to 255 ASCII characters. Molecule would create and delete the key pair each time it is executed.
-        required: yes
         type: str
 
       keypair_path:
         description: The path where the created key pair will be saved.
-        required: yes
         type: str
 
       resource_state:
@@ -44,7 +41,6 @@ argument_specs:
 
       security_group_name:
         description: Security group to use with the instance.
-        required: yes
         type: str
 
       security_group_rules:
@@ -58,15 +54,12 @@ argument_specs:
             options:
               cidr_ip:
                 description: The IPv4 CIDR range traffic is coming from.
-                required: yes
                 type: str
               from_port:
                 description: The start of the range of ports that traffic is coming from. A value of -1 indicates all ports.
-                required: yes
                 type: int
               to_port:
                 description: The end of the range of ports that traffic is coming from. A value of -1 indicates all ports.
-                required: yes
                 type: int
 
       security_group_rules_egress:
@@ -80,15 +73,12 @@ argument_specs:
             options:
               cidr_ip:
                 description: The IPv4 CIDR range traffic is going to.
-                required: yes
                 type: str
               from_port:
                 description: The start of the range of ports that traffic is going to. A value of -1 indicates all ports.
-                required: yes
                 type: int
               to_port:
                 description: The end of the range of ports that traffic is going to. A value of -1 indicates all ports.
-                required: yes
                 type: int
 
       ssh_port:
@@ -98,17 +88,14 @@ argument_specs:
 
       ssh_user:
         description: SSH user name for molcule to connect to the instance.
-        required: yes
         type: str
 
       tag_created_by:
         description: The value of 'created_by' tag, assumed that the name or email address of the creator of the resources will be set.
-        required: yes
         type: str
 
       tag_name:
         description: The value of 'Name' tag of AWS resources; EC2 instances, security group, keypair
-        required: yes
         type: str
 
       volume_size:
@@ -118,5 +105,4 @@ argument_specs:
 
       vpc_subnet_id:
         description: The subnet ID in which to launch the instance (VPC). VPC must be created in advance.
-        required: yes
         type: str
