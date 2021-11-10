@@ -5,13 +5,8 @@
   gather_facts: false
 
   tasks:
-    - name: set_fact molecule_platforms
-      set_fact:
-        molecule_platforms: "{{ molecule_yml.platforms }}"
-
     - name: Execute
       ansible.builtin.include_role:
         name: molecule_test_ec2
       vars:
-        keypair_name: "{{ molecule_platforms.0.keypair_name }}"
         resource_state: 'absent'
