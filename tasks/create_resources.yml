@@ -35,19 +35,17 @@
     owners: "{{ image_owner }}"
     filters:
       name: "{{ image_name }}"
-  loop: "{{ molecule_yml.platforms }}"
-  loop_control:
-    index_var: index
-  when: item.image is not defined
   register: ami_info
+  when:
+    - image_owner is defined
+    - image_name is defined
 
 - name: Set AMI id
   ansible.builtin.set_fact:
-    image: "{{ ami_info.results[-1].images[-1].image_id }}"
-  loop: "{{ molecule_yml.platforms }}"
-  loop_control:
-    index_var: index
-  when: item.image is not defined
+    image: "{{ ami_info.images[-1].image_id }}"
+  when:
+    - image_owner is defined
+    - image_name is defined
 
 - name: Create molecule instance(s)
   amazon.aws.ec2:
