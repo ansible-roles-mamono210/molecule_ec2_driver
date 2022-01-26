@@ -19,15 +19,6 @@ provisioner:
   config_options:
     defaults:
       callback_enabled: ansible.posix.profile_tasks
-  connection_options:
-    image_name: "redmica_golden-image_centos8*"
-    image_owner: ${AMI_OWNER_ID}
-    instance_type: t2.micro
-    keypair_name: ${KEYPAIR_NAME}
-    security_group_name: ${SECURITY_GROUP_NAME}
-    tag_name: ${TAG_NAME}
-    tag_created_by: ${CREATED_BY}
-    vpc_subnet_id: ${VPC_SUBNET_ID}
 verifier:
   name: ansible
 scenario:
