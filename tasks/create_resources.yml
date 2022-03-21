@@ -105,13 +105,13 @@
   when: server.changed | bool
 
 - name: Dump instance config
-  copy:
+  ansible.builtin.copy:
     content: "{{ instance_conf | to_json | from_json | community.molecule.to_yaml }}"
     dest: "{{ molecule_instance_config }}"
   when: server.changed | bool
 
 - name: Wait for SSH
-  wait_for:
+  ansible.builtin.wait_for:
     port: "{{ ssh_port }}"
     host: "{{ item.address }}"
     search_regex: SSH
@@ -120,5 +120,5 @@
   with_items: "{{ lookup('file', molecule_instance_config) | community.molecule.from_yaml }}"
 
 - name: Wait for boot process to finish
-  pause:
+  ansible.builtin.pause:
     minutes: 2

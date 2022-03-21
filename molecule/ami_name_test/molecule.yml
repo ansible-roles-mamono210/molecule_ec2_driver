@@ -5,9 +5,9 @@ driver:
   name: ec2
 platforms:
   - name: instance
-    image_name: "redmica_golden-image_centos8*"
+    image_name: "redmica_golden-image_centos-stream8*"
     image_owner: ${AMI_OWNER_ID}
-    instance_type: t2.micro
+    instance_type: t4g.medium
     keypair_name: ${KEYPAIR_NAME}
     security_group_name: ${SECURITY_GROUP_NAME}
     tag_name: ${TAG_NAME}
