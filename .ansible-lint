@@ -2,6 +2,8 @@
 exclude_paths:
   - molecule/group_test/prepare.yml
 parseable: true
-skip_list:
+warn_list:
   - 'no-handler'
+  - 'risky-file-permissions'
   - 'role-name'
+  - 'unnamed-task'
