@@ -19,6 +19,9 @@ executors:
       - image: ghcr.io/docker-hub-tm/circleci-executors/trailing-whitespace:latest
     resource_class: small
 
+orbs:
+  aws-cli: circleci/aws-cli@2.1.0
+
 jobs:
   ansible-lint:
     executor: ansible-lint
@@ -59,6 +62,27 @@ jobs:
     working_directory: ~/molecule_test_ec2
     steps:
       - checkout
+      - aws-cli/install
+      - run:
+          name: Install jq
+          command: |
+            sudo apt -y update
+            sudo apt -y install jq
+      - run:
+          name: Create AWS access key pair
+          command: |
+            aws_sts_credentials=$(aws sts assume-role-with-web-identity \
+            --role-arn ${AWS_ROLE_ARN} \
+            --web-identity-token ${CIRCLE_OIDC_TOKEN} \
+            --role-session-name "circleci_ansible-roles_<< parameters.scenario-name >>" \
+            --duration-seconds 1800 \
+            --query "Credentials" \
+            --output "json")
+
+            echo export AWS_ACCESS_KEY_ID="$(echo $aws_sts_credentials | jq -r '.AccessKeyId')" >> $BASH_ENV
+            echo export AWS_SECRET_ACCESS_KEY="$(echo $aws_sts_credentials | jq -r '.SecretAccessKey')" >> $BASH_ENV
+            echo export AWS_SESSION_TOKEN="$(echo $aws_sts_credentials | jq -r '.SessionToken')" >> $BASH_ENV
+            source $BASH_ENV
       - run:
           name: Set environment variable with timestamp for making sure Molecule would create unique AWS resources
           command: |
@@ -69,24 +93,6 @@ jobs:
             echo "export AWSIAM_USER=$AWSIAM_USER" >> $BASH_ENV
             echo "export AWSIAM_POLICY_NAME=$AWSIAM_POLICY_NAME" >> $BASH_ENV
             source $BASH_ENV
-      - run:
-          name: Create AWS Access Key
-          command: |
-            molecule dependency --scenario-name awsiam
-            molecule converge --scenario-name awsiam
-          environment:
-            ANSIBLE_FORCE_COLOR: 1
-            # AWS_ACCESS_KEY_ID_1: sotred in CircleCI environment variables
-            # AWS_DEFAULT_REGION: sotred in CircleCI environment variables
-            # AWS_SECRET_ACCESS_KEY_1: stored in CircleCI environment variables
-            # AWSIAM_USER: stored in CircleCI environment variables
-            # AWSIAM_POCLIY_NAME: stored in CircleCI environment variables
-            MOLECULE_NO_LOG: True
-            MOLECULE_VERBOSITY: 0
-            PROFILE_TASKS_SORT_ORDER: 'none'
-            PROFILE_TASKS_TASK_OUTPUT_LIMIT: 200
-            PY_COLORS: 1
-            TZ: 'Asia/Tokyo'
       - run:
           name: Set timestamp for making sure Molecule would create unique AWS resources
           command: |
@@ -111,7 +117,9 @@ jobs:
           environment:
             ANSIBLE_FORCE_COLOR: 1
             # AMI_OWNER_ID: sotred in system environment variables
+            # AWS_ACCESS_KEY_ID: sotred in system environment variables
             # AWS_DEFAULT_REGION: sotred in CircleCI environment variables
+            # AWS_SECRET_ACCESS_KEY: stored in system environment variables
             # CREATED_BY: stored in CircleCI environment variables
             # KEYPAIR_NAME: sotred in CircleCI environment variables
             MOLECULE_NO_LOG: True
@@ -122,22 +130,6 @@ jobs:
             PY_COLORS: 1
             # SECURITY_GROUP_NAME: sotred in CircleCI environment variables
             # VPC_SUBNET_ID: sotred in CircleCI environment variables
-            TZ: 'Asia/Tokyo'
-      - run:
-          name: Delete AWS Access Key
-          command: |
-            molecule cleanup --scenario-name awsiam
-          environment:
-            ANSIBLE_FORCE_COLOR: 1
-            # AWS_ACCESS_KEY_ID_1: sotred in CircleCI environment variables
-            # AWS_DEFAULT_REGION: sotred in CircleCI environment variables
-            # AWS_SECRET_ACCESS_KEY_1: stored in CircleCI environment variables
-            # AWSIAM_USER: stored in CircleCI environment variables
-            # AWSIAM_POCLIY_NAME: stored in CircleCI environment variables
-            MOLECULE_VERBOSITY: 0
-            PROFILE_TASKS_SORT_ORDER: 'none'
-            PROFILE_TASKS_TASK_OUTPUT_LIMIT: 200
-            PY_COLORS: 1
             TZ: 'Asia/Tokyo'
       - run:
           name: Show Ansible version
@@ -184,7 +176,7 @@ workflows:
           requires:
             - yamllint
       - molecule:
-          context: aws-credentials
+          context: aws-oidc
           matrix:
             parameters:
               scenario-name:
