@@ -5,6 +5,8 @@ instance_type: t2.micro
 
 keypair_name:
 
+profile:
+
 resource_state: present
 
 security_group_name:

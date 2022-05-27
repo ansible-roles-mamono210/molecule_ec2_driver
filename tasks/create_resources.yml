@@ -3,6 +3,7 @@
   amazon.aws.ec2_group:
     name: "{{ security_group_name }}"
     description: "{{ security_group_name }}"
+    profile: "{{ profie | default(omit) }}"
     rules: "{{ security_group_rules }}"
     rules_egress: "{{ security_group_rules_egress }}"
   register: security_group
@@ -15,12 +16,14 @@
 - name: Delete remote keypair
   amazon.aws.ec2_key:
     name: "{{ keypair_name }}"
+    profile: "{{ profie | default(omit) }}"
     state: absent
   when: not keypair_local.stat.exists
 
 - name: Create keypair
   amazon.aws.ec2_key:
     name: "{{ keypair_name }}"
+    profile: "{{ profie | default(omit) }}"
   register: keypair
 
 - name: Persist the keypair
@@ -35,6 +38,7 @@
     owners: "{{ image_owner }}"
     filters:
       name: "{{ image_name }}"
+    profile: "{{ profie | default(omit) }}"
   register: ami_info
   when:
     - image_owner is defined
@@ -49,24 +53,25 @@
 
 - name: Create molecule instance(s)
   amazon.aws.ec2:
-    key_name: "{{ keypair_name }}"
+    assign_public_ip: true
+    count_tag:
+      instance: "{{ item.name }}"
+    exact_count: 1
+    group: "{{ security_group_name }}"
     image: "{{ image }}"
     instance_type: "{{ instance_type }}"
-    vpc_subnet_id: "{{ vpc_subnet_id }}"
-    group: "{{ security_group_name }}"
+    key_name: "{{ keypair_name }}"
     instance_tags:
       created_by: "{{ tag_created_by }}"
       instance: "{{ tag_name }}"
       Name: "{{ tag_name }}"
-    wait: true
-    assign_public_ip: true
-    exact_count: 1
-    count_tag:
-      instance: "{{ item.name }}"
+    profile: "{{ profie | default(omit) }}"
     volumes:
       - device_name: /dev/sda1
         delete_on_termination: yes
         volume_size: "{{ volume_size }}"
+    vpc_subnet_id: "{{ vpc_subnet_id }}"
+    wait: true
   register: server
   loop: "{{ molecule_yml.platforms }}"
   loop_control:

@@ -20,6 +20,7 @@ See details in 'meta/argument_specs.yml'.
 image:
 instance_type: t2.micro
 keypair_name:
+profile:
 security_group_name:
 vpc_subnet_id:
 tag_name:

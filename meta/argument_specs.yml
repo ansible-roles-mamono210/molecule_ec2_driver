@@ -32,6 +32,10 @@ argument_specs:
         description: The path where the created key pair will be saved.
         type: str
 
+      profile:
+        description: Using profile will override aws_access_key, aws_secret_key and security_token and support for passing them at the same time as profile has been deprecated.
+        type: str
+
       resource_state:
         choices:
           - present

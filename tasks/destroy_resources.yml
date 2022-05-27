@@ -12,6 +12,7 @@
 
 - name: Destroy molecule instance(s)
   amazon.aws.ec2:
+    profile: "{{ profie | default(omit) }}"
     state: absent
     instance_ids: "{{ item.instance_ids }}"
   register: server
@@ -31,6 +32,7 @@
 - name: Delete remote keypair
   amazon.aws.ec2_key:
     name: "{{ item.keypair_name }}"
+    profile: "{{ profie | default(omit) }}"
     state: absent
   with_items: "{{ instance_conf }}"
   when: not skip_instances
@@ -38,6 +40,7 @@
 - name: Delete security group
   amazon.aws.ec2_group:
     group_id: "{{ item.group_id }}"
+    profile: "{{ profie | default(omit) }}"
     state: absent
   register: ec2_group_jobs
   until: ec2_group_jobs.group_id is none
