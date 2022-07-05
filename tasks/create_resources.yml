@@ -52,26 +52,27 @@
     - image_name is defined
 
 - name: Create molecule instance(s)
-  amazon.aws.ec2:
-    assign_public_ip: true
-    count_tag:
-      instance: "{{ item.name }}"
-    exact_count: 1
-    group: "{{ security_group_name }}"
-    image: "{{ image }}"
+  amazon.aws.ec2_instance:
+    count: 1
+    image:
+      id: "{{ image }}"
     instance_type: "{{ instance_type }}"
     key_name: "{{ keypair_name }}"
-    instance_tags:
+    name: "{{ tag_name }}"
+    network:
+      assign_public_ip: true
+    profile: "{{ profie | default(omit) }}"
+    security_group: "{{ security_group_name }}"
+    tags:
       created_by: "{{ tag_created_by }}"
       instance: "{{ tag_name }}"
-      Name: "{{ tag_name }}"
-    profile: "{{ profie | default(omit) }}"
     volumes:
       - device_name: /dev/sda1
-        delete_on_termination: yes
-        volume_size: "{{ volume_size }}"
+        ebs:
+          delete_on_termination: yes
+          volume_size: "{{ volume_size }}"
     vpc_subnet_id: "{{ vpc_subnet_id }}"
-    wait: true
+    wait: yes
   register: server
   loop: "{{ molecule_yml.platforms }}"
   loop_control:
@@ -87,20 +88,28 @@
   retries: 300
   with_items: "{{ server.results }}"
 
-# Mandatory configuration for Molecule to function.
+- name: Wait until Ansible could retrive EC2 instance informations
+  ansible.builtin.pause:
+    minutes: 1
+
+- name: Retrieve running EC2 instance information
+  amazon.aws.ec2_instance_info:
+    filters:
+      "tag:Name": "{{ tag_name }}"
+  register: ec2_info
 
 - name: Populate instance config dict
   ansible.builtin.set_fact:
     instance_conf_dict: {
-      'instance': "{{ item.instances[0].tags.instance }}",
-      'address': "{{ item.instances[0].public_ip }}",
+      'instance': "{{ item.tags.instance }}",
+      'address': "{{ item.public_ip_address }}",
       'keypair_name': "{{ keypair_name }}",
       'user': "{{ ssh_user }}",
       'port': "{{ ssh_port }}",
       'identity_file': "{{ keypair_path }}",
-      'instance_ids': "{{ item.instance_ids }}",
+      'instance_ids': "{{ item.instance_id }}",
       'group_id': "{{ security_group.group_id }}", }
-  with_items: "{{ ec2_jobs.results }}"
+  with_items: '{{ ec2_info.instances }}'
   register: instance_config_dict
   when: server.changed | bool
 
@@ -126,4 +135,4 @@
 
 - name: Wait for boot process to finish
   ansible.builtin.pause:
-    minutes: 2
+    minutes: 1
