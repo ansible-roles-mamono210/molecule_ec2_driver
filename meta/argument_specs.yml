@@ -8,6 +8,13 @@ argument_specs:
     author: mamono210
     options:
 
+      detailed_monitoring:
+        choices:
+          - yes
+          - no
+        default: yes
+        description: Whether to allow detailed cloudwatch metrics to be collected, enabling more detailed alerting. Default value is yes.
+
       image:
         description: AMI ID. Required when resource_state=present, and image-name and image-owner is not set.
         type: str

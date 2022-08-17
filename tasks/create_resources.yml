@@ -54,6 +54,7 @@
 - name: Create molecule instance(s)
   amazon.aws.ec2_instance:
     count: 1
+    detailed_monitoring: "{{ detailed_monitoring | default('yes') }}"
     image:
       id: "{{ image }}"
     instance_type: "{{ instance_type }}"
