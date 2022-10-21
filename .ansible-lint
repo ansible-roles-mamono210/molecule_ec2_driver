@@ -3,5 +3,4 @@ parseable: true
 warn_list:
   - 'no-handler'
   - 'risky-file-permissions'
-  - 'role-name'
   - 'unnamed-task'
