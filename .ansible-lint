@@ -8,4 +8,3 @@ warn_list:
   - 'role-name'
   - 'unnamed-task'
   - 'schema'
-  - 'fqcn[action-core]'

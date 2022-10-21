@@ -1,8 +1,8 @@
 ---
 # Create EC2 resources
-- include_tasks: create_resources.yml
+- ansible.builtin.include_tasks: create_resources.yml
   when: resource_state == 'present'
 
 # Destroy EC2 resources
-- include_tasks: destroy_resources.yml
+- ansible.builtin.include_tasks: destroy_resources.yml
   when: resource_state == 'absent'
