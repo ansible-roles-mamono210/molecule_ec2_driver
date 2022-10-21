@@ -1,14 +1,17 @@
 ---
+dependencies: []
 galaxy_info:
-  role_name: user
-  author: tomonorimatsumura
-  description: Add Linux user to the system
+  author: mamono210
   company: no name
+  description: Create and delete an EC2 instance to run Molecule.
+  galaxy_tags: []
   license: "license (BSD, MIT)"
-  min_ansible_version: 3.0
+  min_ansible_version: 6.0.0
+  role_name: molecule_test_ec2
   platforms:
     - name: EL
-      versions:
+      release:
         - 7
-  galaxy_tags: []
-dependencies: []
+    - name: Ubuntu
+      release:
+        - 20.04

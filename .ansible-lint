@@ -7,4 +7,3 @@ warn_list:
   - 'risky-file-permissions'
   - 'role-name'
   - 'unnamed-task'
-  - 'schema'
