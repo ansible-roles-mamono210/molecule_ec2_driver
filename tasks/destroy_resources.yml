@@ -1,5 +1,6 @@
 ---
-- block:
+- name: Create instance config file
+  block:
     - name: Populate instance config
       ansible.builtin.set_fact:
         instance_conf: "{{ lookup('file', molecule_instance_config) | community.molecule.from_yaml }}"
