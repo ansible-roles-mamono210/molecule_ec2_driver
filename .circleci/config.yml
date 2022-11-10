@@ -107,10 +107,6 @@ jobs:
             echo "export TAG_NAME=${VALUE}_${TIMESTAMP}" >> $BASH_ENV
             source $BASH_ENV
       - run:
-          name: Install required Ansible Collections and roles
-          command: |
-            ansible-galaxy collection install community.molecule
-      - run:
           name: Test with molecule
           command: |
             molecule test --scenario-name << parameters.scenario-name >>
@@ -177,10 +173,6 @@ jobs:
             echo "export SECURITY_GROUP_NAME=${VALUE}_${TIMESTAMP}" >> $BASH_ENV
             echo "export TAG_NAME=${VALUE}_${TIMESTAMP}" >> $BASH_ENV
             source $BASH_ENV
-      - run:
-          name: Install required Ansible Collections and roles
-          command: |
-            ansible-galaxy collection install community.molecule
       - run:
           name: Test with molecule
           command: |
