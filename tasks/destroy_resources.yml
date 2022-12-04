@@ -39,7 +39,7 @@
   when: not skip_instances
 
 - name: Delete security group
-  amazon.aws.ec2_group:
+  amazon.aws.ec2_security_group:
     group_id: "{{ item.group_id }}"
     profile: "{{ profie | default(omit) }}"
     state: absent

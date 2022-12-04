@@ -1,6 +1,6 @@
 ---
 - name: Create security group
-  amazon.aws.ec2_group:
+  amazon.aws.ec2_security_group:
     name: "{{ security_group_name }}"
     description: "{{ security_group_name }}"
     profile: "{{ profie | default(omit) }}"
