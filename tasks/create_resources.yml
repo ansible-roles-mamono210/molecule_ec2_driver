@@ -89,7 +89,7 @@
   retries: 300
   with_items: "{{ server.results }}"
 
-- name: Wait until Ansible could retrive EC2 instance informations
+- name: Wait until Ansible could retrieve EC2 instance informations
   ansible.builtin.pause:
     minutes: 1
 
