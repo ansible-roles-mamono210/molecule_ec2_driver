@@ -1,4 +1,5 @@
 ---
 parseable: true
 warn_list:
-  - 'no-handler'
+  - args[module]
+  - no-handler
