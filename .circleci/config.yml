@@ -6,10 +6,6 @@ executors:
     docker:
       - image: ghcr.io/docker-images-mamono210/circleci-executors_molecule/molecule:ec2
     resource_class: small
-  yamllint:
-    docker:
-      - image: ghcr.io/docker-images-mamono210/circleci-executors/yamllint:latest
-    resource_class: small
   trailing-whitespace:
     docker:
       - image: ghcr.io/docker-images-mamono210/circleci-executors/trailing-whitespace:latest
@@ -18,6 +14,7 @@ executors:
 orbs:
   ansible-lint: orbss/ansible-lint@0.0.3
   aws-cli: circleci/aws-cli@3.1.1
+  yamllint: orbss/yamllint@0.0.4
 
 jobs:
   ansible-lint:
@@ -174,20 +171,6 @@ jobs:
       - run:
           name: Show Molecule version
           command: molecule --version
-  yamllint:
-    executor: yamllint
-    steps:
-      - checkout
-      - run:
-          name: Execute yamllint
-          command: yamllint *
-      - run:
-          name: Show yamllint version
-          command: |
-            yamllint --version \
-            | GREP_COLORS='mt=01;34' egrep --color=always '[[:digit:]]' \
-            | GREP_COLORS='mt=01;34' egrep --color=always '\.' \
-            | GREP_COLORS='mt=01;33' egrep --color=always 'yamllint.* '
   trailing-whitespace:
     executor: trailing-whitespace
     steps:
@@ -195,6 +178,11 @@ jobs:
       - run:
           name: Execute trailing-whitespace
           command: trailing-whitespace
+  yamllint:
+    executor: yamllint/default
+    steps:
+      - checkout
+      - yamllint/execute
 
 workflows:
   version: 2.1
