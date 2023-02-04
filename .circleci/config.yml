@@ -56,6 +56,9 @@ jobs:
           name: Set profile name to CircleCI environment variable
           command: |
             echo "export AWS_PROFILE=molecule" >> $BASH_ENV
+            echo "export AWS_ACCESS_KEY_ID=" >> $BASH_ENV
+            echo "export AWS_SECRET_ACCESS_KEY=" >> $BASH_ENV
+            echo "export AWS_SESSION_TOKEN=" >> $BASH_ENV
             source $BASH_ENV
       - molecule-ec2/execute:
           aws-ami-name: "centos7-1*"
