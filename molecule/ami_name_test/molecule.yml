@@ -2,7 +2,7 @@
 dependency:
   name: galaxy
 driver:
-  name: ec2
+  name: delegated
 platforms:
   - name: instance
     image_name: "redmica_golden-image_centos-stream8*"

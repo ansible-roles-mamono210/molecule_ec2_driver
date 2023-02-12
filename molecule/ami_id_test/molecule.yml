@@ -2,7 +2,7 @@
 dependency:
   name: galaxy
 driver:
-  name: ec2
+  name: delegated
 platforms:
   - name: instance
     image: ami-00f65b9dfc6773444
