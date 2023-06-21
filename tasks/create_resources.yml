@@ -97,6 +97,7 @@
   amazon.aws.ec2_instance_info:
     filters:
       "tag:Name": "{{ tag_name }}"
+      "instance-state-code": '16'
   register: ec2_info
 
 - name: Populate instance config dict
