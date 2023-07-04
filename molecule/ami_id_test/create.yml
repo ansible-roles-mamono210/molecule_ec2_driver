@@ -1,5 +1,5 @@
 ---
-- name: Destroy
+- name: Create
   hosts: localhost
   connection: local
   gather_facts: false
@@ -9,4 +9,4 @@
       ansible.builtin.include_role:
         name: molecule_test_ec2
       vars:
-        molecule_test_ec2_resource_state: 'absent'
+        molecule_test_ec2_resource_state: 'present'
