@@ -7,7 +7,7 @@ galaxy_info:
   galaxy_tags: []
   license: "license (BSD, MIT)"
   min_ansible_version: 8.0.0
-  role_name: molecule_test_ec2
+  role_name: molecule_ec2_driver
   platforms:
     - name: EL
       release:
