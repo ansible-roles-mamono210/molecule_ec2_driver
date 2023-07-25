@@ -165,11 +165,10 @@
   ansible.builtin.wait_for:
     port: "{{ item.port }}"
     host: "{{ item.address }}"
-    search_regex: SSH
+    state: present
     delay: 10
-    timeout: 320
+    timeout: 400
+  register: connection_results
+  until: connection_results is succeeded
+  retries: 300
   with_items: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
-
-- name: Wait for boot process to finish
-  ansible.builtin.pause:
-    minutes: 1

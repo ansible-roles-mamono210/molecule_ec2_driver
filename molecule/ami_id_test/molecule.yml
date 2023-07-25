@@ -33,6 +33,7 @@ provisioner:
   connection_options:
     ansible_user: centos
     profile: ${AWS_PROFILE}
+  log: false
 verifier:
   name: ansible
 scenario:
