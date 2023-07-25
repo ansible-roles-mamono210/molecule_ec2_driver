@@ -4,7 +4,13 @@ galaxy_info:
   author: mamono210
   company: no name
   description: Create and delete an EC2 instance to run Molecule.
-  galaxy_tags: []
+  galaxy_tags:
+    - amazon
+    - aws
+    - driver
+    - ec2
+    - molecule
+    - testing
   license: "license (BSD, MIT)"
   min_ansible_version: 8.0.0
   role_name: molecule_ec2_driver
