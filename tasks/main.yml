@@ -2,9 +2,9 @@
 # Create EC2 resources
 - name: Create EC2 instance
   ansible.builtin.include_tasks: create_resources.yml
-  when: molecule_test_ec2_resource_state == 'present'
+  when: molecule_ec2_driver_resource_state == 'present'
 
 # Destroy EC2 resources
 - name: Destroy EC2 instance
   ansible.builtin.include_tasks: destroy_resources.yml
-  when: molecule_test_ec2_resource_state == 'absent'
+  when: molecule_ec2_driver_resource_state == 'absent'

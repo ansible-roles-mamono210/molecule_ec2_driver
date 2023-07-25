@@ -7,7 +7,7 @@ argument_specs:
       - Delete EC2 instances, keypair, security group
     author: mamono210
     options:
-      molecule_ec2_resource_state:
+      molecule_ec2_driver_resource_state:
         choices:
           - present
           - absent
