@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/ansible-roles-mamono210/molecule_test_ec2.svg?style=svg)](https://circleci.com/gh/ansible-roles-mamono210/molecule_test_ec2)
+[![CircleCI](https://circleci.com/gh/ansible-roles-mamono210/molecule_ec2_driver.svg?style=svg)](https://circleci.com/gh/ansible-roles-mamono210/molecule_ec2_driver)
 
 Role Description
 =========
