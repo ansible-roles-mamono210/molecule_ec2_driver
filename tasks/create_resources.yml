@@ -147,19 +147,16 @@
       'group_id': "{{ item.security_groups[0].group_id }}", }
   with_items: "{{ ec2_info.results[0]['instances'] }}"
   register: instance_config_dict
-  when: ec2_jobs.changed
 
 - name: Convert instance config dict to a list
   ansible.builtin.set_fact:
     instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
-  when: ec2_jobs.changed
 
 - name: Dump instance config
   ansible.builtin.copy:
     content: "{{ instance_conf | to_json | from_json | to_yaml }}"
     dest: "{{ molecule_instance_config }}"
     mode: 0755
-  when: ec2_jobs.changed
 
 - name: Wait for SSH
   ansible.builtin.wait_for:
