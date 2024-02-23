@@ -20,9 +20,11 @@
       loop_control:
         index_var: index
 
-    - name: Set AMI id
+    - name: Set AMI id to the latest one by creation date
       ansible.builtin.set_fact:
-        molecule_image_id: "{{ ami_info.results[0].images[0].image_id }}"
+        molecule_image_id: "{{ item.images | sort(attribute='creation_date', reverse=true) | first | json_query('image_id') }}"
+      loop: "{{ ami_info.results }}"
+      when: ami_info.results | length > 0
 
   rescue:
     - name: Set AMI id
