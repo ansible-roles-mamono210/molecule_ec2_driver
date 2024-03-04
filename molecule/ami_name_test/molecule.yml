@@ -5,7 +5,7 @@ driver:
   name: delegated
 platforms:
   - name: ${PLATFORM_NAME}
-    image_name: "redmica_golden-image_centos-stream8*"
+    image_name: "redmica_golden-image_centos-stream9*"
     image_owner: ${AMI_OWNER_ID}
     instance_type: t2.small
     keypair_name: ${KEYPAIR_NAME}
@@ -21,10 +21,15 @@ platforms:
         to_port: 0
         cidr_ip: '0.0.0.0/0'
     ssh_port: 22
-    ssh_user: centos
+    ssh_user: 'ec2-user'
     tag_name: ${TAG_NAME}
     tag_created_by: ${CREATED_BY}
-    volume_size: 20
+    volumes:
+      - device_name: /dev/sda1
+        ebs:
+          delete_on_termination: yes
+          volume_size: 20
+          volume_type: 'gp3'
     vpc_subnet_id: ${VPC_SUBNET_ID}
 provisioner:
   name: ansible
@@ -32,7 +37,7 @@ provisioner:
     defaults:
       callbacks_enabled: ansible.posix.profile_tasks
   connection_options:
-    ansible_user: centos
+    ansible_user: 'ec2-user'
     profile: ${AWS_PROFILE}
   log: false
 verifier:

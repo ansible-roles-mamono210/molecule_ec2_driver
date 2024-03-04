@@ -90,11 +90,7 @@
     tags:
       created_by: "{{ item.tag_created_by }}"
       instance: "{{ item.tag_name }}"
-    volumes:
-      - device_name: /dev/sda1
-        ebs:
-          delete_on_termination: yes
-          volume_size: "{{ item.volume_size | default(omit) }}"
+    volumes: "{{ item.volumes | list }}"
     vpc_subnet_id: "{{ item.vpc_subnet_id }}"
     wait: yes
   register: server
