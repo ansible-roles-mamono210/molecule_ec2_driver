@@ -33,8 +33,11 @@ jobs:
           role-session-name: "ansible-roles-mamono210_molecule_test_ec2_env_<< parameters.scenario-name >>"
           session-duration: '1800'
       - molecule-ec2/execute:
-          aws-ami-name: "centos7-1*"
+          ansible-user: 'ec2-user'
+          aws-ami-id: "ami-010d54624dc38d3c7"
+          aws-ami-name: "redmica_golden-image_centos-stream9*"
           aws-ami-owner-id: "808683561341"
+          aws-instance-type: 't2.medium'
           aws-resource-name: "ansible-roles-mamono210_molecule_test_ec2_env_<< parameters.scenario-name >>"
           aws-vpc-subnet-id: "subnet-022a704b3061b8b39"
           circleci-timeout: "15m"
@@ -61,8 +64,11 @@ jobs:
             echo "export AWS_SESSION_TOKEN=" >> $BASH_ENV
             source $BASH_ENV
       - molecule-ec2/execute:
-          aws-ami-name: "centos7-1*"
+          ansible-user: 'ec2-user'
+          aws-ami-id: "ami-010d54624dc38d3c7"
+          aws-ami-name: "redmica_golden-image_centos-stream9*"
           aws-ami-owner-id: "808683561341"
+          aws-instance-type: 't2.medium'
           aws-resource-name: "ansible-roles-mamono210_molecule_test_ec2_profile_<< parameters.scenario-name >>"
           aws-vpc-subnet-id: "subnet-022a704b3061b8b39"
           circleci-timeout: "15m"
@@ -96,8 +102,8 @@ workflows:
           matrix:
             parameters:
               scenario-name:
-                - "ami_name_test"
                 - "ami_id_test"
+                - "ami_name_test"
           requires:
             - ansible-lint
       - molecule-profile:
@@ -105,7 +111,7 @@ workflows:
           matrix:
             parameters:
               scenario-name:
-                - "ami_name_test"
                 - "ami_id_test"
+                - "ami_name_test"
           requires:
             - ansible-lint

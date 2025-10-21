@@ -2,12 +2,12 @@
 dependency:
   name: galaxy
 driver:
-  name: delegated
+  name: default
 platforms:
   - name: ${PLATFORM_NAME}
-    image_name: "redmica_golden-image_centos-stream9*"
+    image_name: ${AMI_NAME}
     image_owner: ${AMI_OWNER_ID}
-    instance_type: t2.small
+    instance_type: ${INSTANCE_TYPE}
     keypair_name: ${KEYPAIR_NAME}
     security_group_name: ${SECURITY_GROUP_NAME}
     security_group_rules:
@@ -21,7 +21,7 @@ platforms:
         to_port: 0
         cidr_ip: '0.0.0.0/0'
     ssh_port: 22
-    ssh_user: 'ec2-user'
+    ssh_user: ${ANSIBLE_USER}
     tag_name: ${TAG_NAME}
     tag_created_by: ${CREATED_BY}
     volumes:
@@ -36,8 +36,9 @@ provisioner:
   config_options:
     defaults:
       callbacks_enabled: ansible.posix.profile_tasks
+      roles_path: "$HOME/.ansible/roles/:$HOME"
   connection_options:
-    ansible_user: 'ec2-user'
+    ansible_user: ${ANSIBLE_USER}
     profile: ${AWS_PROFILE}
   log: false
 verifier:
