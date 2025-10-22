@@ -11,6 +11,23 @@
         instance_conf: {}
         skip_instances: true
 
+- name: Check instance_config existence
+  ansible.builtin.stat:
+    path: "{{ molecule_instance_config }}"
+  register: instance_cfg
+
+- name: Load instance config (when present)
+  ansible.builtin.set_fact:
+    instance_conf: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
+    skip_instances: false
+  when: instance_cfg.stat.exists
+
+- name: Set empty instance list (when missing)
+  ansible.builtin.set_fact:
+    instance_conf: []
+    skip_instances: true
+  when: not instance_cfg.stat.exists
+
 - name: Destroy molecule instance(s)
   amazon.aws.ec2_instance:
     profile: "{{ profile | default(omit) }}"
@@ -58,7 +75,7 @@
 
 - name: Populate instance config
   ansible.builtin.set_fact:
-    instance_conf: {}
+    instance_conf: []
 
 - name: Dump instance config
   ansible.builtin.copy:
