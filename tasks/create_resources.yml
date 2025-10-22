@@ -67,12 +67,12 @@
 - name: Persist the keypair
   ansible.builtin.copy:
     dest: "{{ molecule_ephemeral_directory }}/ssh_key"
-    content: "{{ keypair.results[0]['key'].private_key }}"
-    mode: 0600
+    content: "{{ keypair.results[index].key.private_key }}"
+    mode: '0600'
   loop: "{{ molecule_yml.platforms }}"
   loop_control:
     index_var: index
-  when: keypair.changed
+  when: keypair.results[index].changed | default(false)
 
 - name: Create molecule instance(s)
   amazon.aws.ec2_instance:
