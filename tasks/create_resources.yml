@@ -14,7 +14,7 @@
         owners: "{{ item.image_owner }}"
         filters:
           name: "{{ item.image_name }}"
-        profile: "{{ item.profie | default(omit) }}"
+        profile: "{{ item.profile | default(profile) | default(omit) }}"
       register: ami_info
       loop: "{{ molecule_yml.platforms }}"
       loop_control:
@@ -38,7 +38,7 @@
   amazon.aws.ec2_security_group:
     name: "{{ item.security_group_name }}"
     description: "{{ item.security_group_name }}"
-    profile: "{{ item.profie | default(omit) }}"
+    profile: "{{ item.profile | default(profile) | default(omit) }}"
     rules: "{{ item.security_group_rules | list }}"
     rules_egress: "{{ item.security_group_rules_egress | list }}"
   register: security_group
@@ -49,7 +49,7 @@
 - name: Delete remote keypair
   amazon.aws.ec2_key:
     name: "{{ item.keypair_name }}"
-    profile: "{{ profie | default(omit) }}"
+    profile: "{{ item.profile | default(profile) | default(omit) }}"
     state: absent
   loop: "{{ molecule_yml.platforms }}"
   loop_control:
@@ -58,7 +58,7 @@
 - name: Create keypair
   amazon.aws.ec2_key:
     name: "{{ item.keypair_name }}"
-    profile: "{{ profie | default(omit) }}"
+    profile: "{{ item.profile | default(profile) | default(omit) }}"
   loop: "{{ molecule_yml.platforms }}"
   loop_control:
     index_var: index
@@ -85,7 +85,7 @@
     name: "{{ item.tag_name }}"
     network:
       assign_public_ip: true
-    profile: "{{ item.profie | default(omit) }}"
+    profile: "{{ item.profile | default(profile) | default(omit) }}"
     security_group: "{{ item.security_group_name }}"
     tags:
       created_by: "{{ item.tag_created_by }}"
