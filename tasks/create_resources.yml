@@ -83,15 +83,17 @@
     instance_type: "{{ item.instance_type }}"
     key_name: "{{ item.keypair_name }}"
     name: "{{ item.tag_name }}"
-    network:
-      assign_public_ip: true
     profile: "{{ item.profile | default(profile) | default(omit) }}"
-    security_group: "{{ item.security_group_name }}"
     tags:
       created_by: "{{ item.tag_created_by }}"
       instance: "{{ item.tag_name }}"
     volumes: "{{ item.volumes | list }}"
-    vpc_subnet_id: "{{ item.vpc_subnet_id }}"
+    network_interfaces:
+      - device_index: 0
+        subnet_id: "{{ item.vpc_subnet_id }}"
+        groups:
+          - "{{ security_group.results[index].group_id | default(omit) }}"
+        assign_public_ip: true
     wait: yes
   register: server
   loop: "{{ molecule_yml.platforms }}"
