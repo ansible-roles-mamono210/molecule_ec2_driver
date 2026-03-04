@@ -1,51 +1,112 @@
 ---
 version: 2.1
 
-executors:
-  trailing-whitespace:
-    docker:
-      - image: ghcr.io/docker-images-mamono210/circleci-executors/trailing-whitespace:latest
-    resource_class: small
-
 orbs:
   ansible-lint: orbss/ansible-lint@0.0.3
   aws-cli: circleci/aws-cli@3.1.1
   molecule-ec2: orbss/molecule-ec2@0.0.9
+  trailing-whitespace: orbss/trailing-whitespace@0.0.2
   yamllint: orbss/yamllint@0.0.4
+
+parameters:
+  ansible_lint_executor_image:
+    type: string
+    default: ghcr.io/docker-images-mamono210/circleci-executors/ansible-lint:26.1.1-py3.14
+  ansible_lint_executor_resource_class:
+    type: enum
+    enum: [small, medium, medium+, large]
+    default: small
+  molecule_ansible_user:
+    type: string
+    default: ec2-user
+  molecule_aws_ami_id:
+    type: string
+    default: ami-010d54624dc38d3c7
+  molecule_aws_ami_name:
+    type: string
+    default: redmica_golden-image_centos-stream9*
+  molecule_aws_ami_owner_id:
+    type: string
+    default: "808683561341"
+  molecule_aws_instance_type:
+    type: string
+    default: t2.medium
+  molecule_aws_session_duration:
+    type: string
+    default: "3600"
+  molecule_aws_vpc_subnet_id:
+    type: string
+    default: subnet-022a704b3061b8b39
+  molecule_circleci_timeout:
+    type: string
+    default: 40m
+  molecule_context:
+    type: string
+    default: aws-oidc
+  molecule_ec2_executor_image:
+    type: string
+    default: ghcr.io/docker-images-mamono210/circleci-executors/molecule-default:26.2.0-py3.14.3-ans13.4.0
+  molecule_ec2_executor_resource_class:
+    type: enum
+    enum: [small, medium, medium+, large]
+    default: small
+  trailing_whitespace_executor_image:
+    type: string
+    default: ghcr.io/docker-images-mamono210/circleci-executors/trailing-whitespace:py3.14-20260210
+  trailing_whitespace_resource_class:
+    type: enum
+    enum: [small, medium, medium+, large]
+    default: small
+  yamllint_executor_image:
+    type: string
+    default: ghcr.io/docker-images-mamono210/circleci-executors/yamllint:1.38.0-py3.14
+  yamllint_executor_resource_class:
+    type: enum
+    enum: [small, medium, medium+, large]
+    default: small
 
 jobs:
   ansible-lint:
-    executor: ansible-lint/default
+    executor:
+      name: ansible-lint/default
+      image: << pipeline.parameters.ansible_lint_executor_image >>
+      resource_class: << pipeline.parameters.ansible_lint_executor_resource_class >>
     steps:
       - checkout
-      - ansible-lint/execute:
-          molecule-role-test: true
+      - ansible-lint/execute
   molecule-env:
-    executor: molecule-ec2/default
+    executor:
+      name: molecule-ec2/default
+      image: << pipeline.parameters.molecule_ec2_executor_image >>
+      resource_class: << pipeline.parameters.molecule_ec2_executor_resource_class >>
     parameters:
-      scenario-name:
+      molecule-scenario-name:
         type: string
     working_directory: ~/molecule_ec2_driver
     steps:
       - checkout
       - aws-cli/setup:
+          profile-name: default
           role-arn: ${AWS_ROLE_ARN}
-          role-session-name: "ansible-roles-mamono210_molecule_test_ec2_env_<< parameters.scenario-name >>"
-          session-duration: '1800'
+          role-session-name: "cci_ans-roles-molecule_ec2_driver_env_<< parameters.molecule-scenario-name >>"
+          session-duration: << pipeline.parameters.molecule_aws_session_duration >>
       - molecule-ec2/execute:
-          ansible-user: 'ec2-user'
-          aws-ami-id: "ami-010d54624dc38d3c7"
-          aws-ami-name: "redmica_golden-image_centos-stream9*"
-          aws-ami-owner-id: "808683561341"
-          aws-instance-type: 't2.medium'
-          aws-resource-name: "ansible-roles-mamono210_molecule_test_ec2_env_<< parameters.scenario-name >>"
-          aws-vpc-subnet-id: "subnet-022a704b3061b8b39"
-          circleci-timeout: "15m"
-          molecule-scenario-name: "<< parameters.scenario-name >>"
+          ansible-user: << pipeline.parameters.molecule_ansible_user >>
+          aws-ami-id: << pipeline.parameters.molecule_aws_ami_id >>
+          aws-ami-name: << pipeline.parameters.molecule_aws_ami_name >>
+          aws-ami-owner-id: << pipeline.parameters.molecule_aws_ami_owner_id >>
+          aws-instance-type: << pipeline.parameters.molecule_aws_instance_type >>
+          aws-resource-name: "cci_ans-roles-_molecule_ec2_driver_env_<< parameters.molecule-scenario-name >>"
+          aws-vpc-subnet-id: << pipeline.parameters.molecule_aws_vpc_subnet_id >>
+          circleci-timeout: << pipeline.parameters.molecule_circleci_timeout >>
+          molecule-scenario-name: << parameters.molecule-scenario-name >>
   molecule-profile:
-    executor: molecule-ec2/default
+    executor:
+      name: molecule-ec2/default
+      image: << pipeline.parameters.molecule_ec2_executor_image >>
+      resource_class: << pipeline.parameters.molecule_ec2_executor_resource_class >>
     parameters:
-      scenario-name:
+      molecule-scenario-name:
         type: string
     working_directory: ~/molecule_ec2_driver
     steps:
@@ -53,8 +114,8 @@ jobs:
       - aws-cli/setup:
           profile-name: molecule
           role-arn: ${AWS_ROLE_ARN}
-          role-session-name: "ansible-roles-mamono210_molecule_test_ec2_profile_<< parameters.scenario-name >>"
-          session-duration: '1800'
+          role-session-name: "cci_ans-roles-molecule_ec2_driver_profile_<< parameters.molecule-scenario-name >>"
+          session-duration: << pipeline.parameters.molecule_aws_session_duration >>
       - run:
           name: Set profile name to CircleCI environment variable
           command: |
@@ -64,24 +125,28 @@ jobs:
             echo "export AWS_SESSION_TOKEN=" >> $BASH_ENV
             source $BASH_ENV
       - molecule-ec2/execute:
-          ansible-user: 'ec2-user'
-          aws-ami-id: "ami-010d54624dc38d3c7"
-          aws-ami-name: "redmica_golden-image_centos-stream9*"
-          aws-ami-owner-id: "808683561341"
-          aws-instance-type: 't2.medium'
-          aws-resource-name: "ansible-roles-mamono210_molecule_test_ec2_profile_<< parameters.scenario-name >>"
-          aws-vpc-subnet-id: "subnet-022a704b3061b8b39"
-          circleci-timeout: "15m"
-          molecule-scenario-name: "<< parameters.scenario-name >>"
+          ansible-user: << pipeline.parameters.molecule_ansible_user >>
+          aws-ami-id: << pipeline.parameters.molecule_aws_ami_id >>
+          aws-ami-name: << pipeline.parameters.molecule_aws_ami_name >>
+          aws-ami-owner-id: << pipeline.parameters.molecule_aws_ami_owner_id >>
+          aws-instance-type: << pipeline.parameters.molecule_aws_instance_type >>
+          aws-resource-name: "cci_ans-roles-molecule_ec2_driver_profile_<< parameters.molecule-scenario-name >>"
+          aws-vpc-subnet-id: << pipeline.parameters.molecule_aws_vpc_subnet_id >>
+          circleci-timeout: << pipeline.parameters.molecule_circleci_timeout >>
+          molecule-scenario-name: << parameters.molecule-scenario-name >>
   trailing-whitespace:
-    executor: trailing-whitespace
+    executor:
+      name: trailing-whitespace/default
+      image: << pipeline.parameters.trailing_whitespace_executor_image >>
+      resource_class: << pipeline.parameters.trailing_whitespace_resource_class >>
     steps:
       - checkout
-      - run:
-          name: Execute trailing-whitespace
-          command: trailing-whitespace
+      - trailing-whitespace/execute
   yamllint:
-    executor: yamllint/default
+    executor:
+      name: yamllint/default
+      image: << pipeline.parameters.yamllint_executor_image >>
+      resource_class: << pipeline.parameters.yamllint_executor_resource_class >>
     steps:
       - checkout
       - yamllint/execute
@@ -98,20 +163,20 @@ workflows:
           requires:
             - yamllint
       - molecule-env:
-          context: aws-oidc
+          context: << pipeline.parameters.molecule_context >>
           matrix:
             parameters:
-              scenario-name:
-                - "ami_id_test"
-                - "ami_name_test"
+              molecule-scenario-name:
+                - 'ami_id_test'
+                - 'ami_name_test'
           requires:
             - ansible-lint
       - molecule-profile:
-          context: aws-oidc
+          context: << pipeline.parameters.molecule_context >>
           matrix:
             parameters:
-              scenario-name:
-                - "ami_id_test"
-                - "ami_name_test"
+              molecule-scenario-name:
+                - 'ami_id_test'
+                - 'ami_name_test'
           requires:
             - ansible-lint

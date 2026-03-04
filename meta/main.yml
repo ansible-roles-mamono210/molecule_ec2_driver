@@ -12,12 +12,12 @@ galaxy_info:
     - molecule
     - testing
   license: "license (BSD, MIT)"
-  min_ansible_version: 8.0.0
+  min_ansible_version: 13.4.0
   role_name: molecule_ec2_driver
   platforms:
     - name: EL
       release:
-        - 8
+        - 9
     - name: Ubuntu
       release:
         - 20.04

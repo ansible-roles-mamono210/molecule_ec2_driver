@@ -3,7 +3,7 @@
 Role Description
 =========
 
-Create and destroy EC2 resources.
+Create and destroy EC2 resources for Linux.
 
 Requirements
 ------------
